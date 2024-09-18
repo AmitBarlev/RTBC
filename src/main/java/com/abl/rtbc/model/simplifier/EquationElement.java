@@ -1,14 +1,9 @@
 package com.abl.rtbc.model.simplifier;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
+public interface EquationElement {
+    ElementType getType();
 
-@Getter
-@RequiredArgsConstructor
-public class EquationElement {
-
-    private final String value;
-    private final ElementType type;
+    String getValue();
 }
 

@@ -1,10 +1,7 @@
 package com.abl.rtbc.model.converter;
 
-import com.abl.rtbc.model.simplifier.ElementType;
-import com.abl.rtbc.model.simplifier.EquationElement;
-import com.abl.rtbc.model.simplifier.Operand;
-import com.abl.rtbc.model.simplifier.Operator;
-import lombok.Value;
+import com.abl.rtbc.model.simplifier.*;
+import com.abl.rtbc.model.simplifier.Number;
 
 import java.util.Stack;
 
@@ -12,7 +9,6 @@ import java.util.Stack;
 public class RPNStack {
 
     Stack<EquationElement> operands;
-
     Stack<EquationElement> operators;
 
     public RPNStack() {

@@ -1,6 +1,7 @@
 package com.abl.rtbc.service.simplifier;
 
 import com.abl.rtbc.model.simplifier.*;
+import com.abl.rtbc.model.simplifier.Number;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
@@ -22,13 +23,13 @@ public class InfixSimplifier {
     private final static String WHITESPACE = " ";
     private final static String EMPTY = "";
 
-    public Flux<List<EquationElement>> simplify(String[] lines){
-        return Flux.fromArray(lines)
+    public Flux<List<EquationElement>> simplify(String lines){
+        return Flux.fromStream(lines.lines())
                 .filter(StringUtils::hasText)
-                .map(this::simplify);
+                .map(this::simplifyLine);
     }
 
-    private List<EquationElement> simplify(String infix) {
+    private List<EquationElement> simplifyLine(String infix) {
         List<EquationElement> expressions = new ArrayList<>();
         infix = infix.replace(WHITESPACE, EMPTY);
 
@@ -49,16 +50,16 @@ public class InfixSimplifier {
                     element = getPreOperandVariable(index, current);
                 }
                 else if (isEqualsOperator(current)){
-                    element = new EqualsOperator(current, ElementType.EQUALS);
+                    element = new EqualsOperator(current);
                 }
                 else if (isOperator(c)){ //operator
-                    element = new Operator(String.valueOf(c), ElementType.OPERATOR);
+                    element = new Operator(String.valueOf(c));
                 }
                 else if ('(' == c){
-                    element = new EquationElement(String.valueOf(c), ElementType.OPENING_BRACKET);
+                    element = new Bracket(ElementType.OPENING_BRACKET, "(");
                 }
                 else if (')' == c){
-                    element = new EquationElement(String.valueOf(c), ElementType.CLOSING_BRACKET);
+                    element = new Bracket(ElementType.CLOSING_BRACKET, ")");
                 }
                 else {
                     throw new RuntimeException("Unidentified expression");
@@ -101,16 +102,19 @@ public class InfixSimplifier {
             ++forward;
         }
 
-        return new Operand(infix.substring(index, forward), ElementType.OPERAND);
+        if (forward < infix.length() && Character.isLetter(infix.charAt(forward)))
+            throw new RuntimeException("Invalid number definition");
+
+        return new Number(infix.substring(index, forward));
     }
 
     private EquationElement getVariableElement(int index, String infix) {
-        return new Variable(getVariableValue(index, infix), ElementType.OPERAND);
+        return new Variable(getVariableValue(index, infix));
     }
 
     private String getVariableValue(int index, String infix) {
         int forward = index;
-        while (forward < infix.length() && Character.isLetter(infix.charAt(forward))){
+        while (forward < infix.length() && Character.isLetterOrDigit(infix.charAt(forward))){
             ++forward;
         }
 
@@ -123,7 +127,7 @@ public class InfixSimplifier {
 
     private EquationElement getPreOperandVariable(int index, String infix) {
         String value = infix.substring(index, index + 2) + getVariableValue(index + 2, infix);
-        return new Variable(value, ElementType.OPERAND);
+        return new Variable(value);
     }
 
     private boolean isOperator(Character c) {
@@ -136,6 +140,6 @@ public class InfixSimplifier {
 
     private boolean isPreOperator(String infix, int index){
         return infix.substring(index).startsWith(INCREMENT) ||
-                infix.substring(index).startsWith(DECREMENT); //add minus
+                infix.substring(index).startsWith(DECREMENT);
     }
 }

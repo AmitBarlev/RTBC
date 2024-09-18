@@ -14,14 +14,18 @@ y = 5 + 3 * 10
 i += y*/
     @Test
     public void x() {
-        String[] x = """
+        String x = """
+                i = 0
+                j = k
+                x = i++ + 5
                 y = 5 + 3 * 10
-                """.lines().toArray(String[]::new);
-
+                i += y
+                """;
         var rpn = new ReversePolishNotationConverter();
         var rpn2 = new ReversePolishNotationCalculator();
         var f = new InfixSimplifier().simplify(x)
                 .map(rpn::convert)
+                .collectList()
                 .map(rpn2::calculate);
         StepVerifier.create(f)
                 .expectNextCount(4)
