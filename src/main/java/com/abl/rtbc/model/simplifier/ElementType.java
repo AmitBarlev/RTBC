@@ -7,5 +7,5 @@ public enum ElementType {
     CLOSING_BRACKET,
     OPERAND,
     OPERATOR,
-    EQUALS
+    ASSIGNMENT
 }

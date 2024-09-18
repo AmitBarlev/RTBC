@@ -1,11 +1,11 @@
 package com.abl.rtbc.model.simplifier;
 
-public class EqualsOperator extends Operator {
-    public EqualsOperator(String value) {
+public class AssignmentOperator extends Operator {
+    public AssignmentOperator(String value) {
         super(value);
     }
 
-    public EquationElement operate(Operand lhs, Operand rhs) {
+    public AlgebraicExpressionElement operate(Operand lhs, Operand rhs) {
 
         Variable variable = (Variable)lhs;
 
@@ -21,7 +21,7 @@ public class EqualsOperator extends Operator {
     }
 
     @Override
-    public String getValue() {
-        return getOperator();
+    public ElementType getType() {
+        return ElementType.ASSIGNMENT;
     }
 }

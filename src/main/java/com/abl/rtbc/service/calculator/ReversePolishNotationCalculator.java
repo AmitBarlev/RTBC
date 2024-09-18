@@ -1,24 +1,20 @@
 package com.abl.rtbc.service.calculator;
 
 import com.abl.rtbc.model.CalculatorResponse;
-import com.abl.rtbc.model.converter.RPNStack;
-import com.abl.rtbc.model.simplifier.Operand;
-import com.abl.rtbc.model.simplifier.Variable;
+import com.abl.rtbc.model.converter.RPNPayload;
+import com.abl.rtbc.model.simplifier.*;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 
 public class ReversePolishNotationCalculator {
 
-    public CalculatorResponse calculate(List<RPNStack> stacks) {
+    public CalculatorResponse calculate(List<RPNPayload> algebraicExpressions) {
         Map<String, Operand> variables = new HashMap<>();
-        stacks.forEach(stack -> calculateLine(stack, variables));
+        algebraicExpressions.forEach(stack -> calculateLine(stack, variables));
         Map<String, Double> output = variables
                 .entrySet()
                 .stream()
@@ -27,26 +23,41 @@ public class ReversePolishNotationCalculator {
         return new CalculatorResponse(output);
     }
 
-    private void calculateLine(RPNStack rpnStack, Map<String, Operand> variables) {
+    private void calculateLine(RPNPayload rpnPayload, Map<String, Operand> variables) {
 
-        while (!rpnStack.isEmpty()) {
+        while (!rpnPayload.isEmpty()) {
 
-            Operand rhs = rpnStack.popOperand();
-            Operand lhs = rpnStack.popOperand();
+            Operand rhs = calculateEquation(rpnPayload.popAlgebraicExpression(), variables);
+            Operand lhs = calculateEquation(rpnPayload.popAlgebraicExpression(), variables);
+            Operator assignment = (Operator)rpnPayload.popAssignment();
 
-            Optional.ofNullable(variables.get(rhs.getName()))
-                    .ifPresent(memorizedRhs -> rhs.setNumericValue(memorizedRhs.getNumericValue()));
-            Optional.ofNullable(variables.get(lhs.getName()))
-                    .ifPresent(memorizedLhs -> lhs.setNumericValue(memorizedLhs.getNumericValue()));
-
-            rpnStack.push(rpnStack.popOperator().operate(lhs, rhs));
-
+            assignment.operate(lhs, rhs);
+            variables.put(lhs.getName(), lhs);
             variables.replace(rhs.getName(), rhs);
-            variables.replace(lhs.getName(), lhs);
+        }
+    }
+
+    private Operand calculateEquation(List<AlgebraicExpressionElement> equation, Map<String, Operand> variables) {
+        Stack<AlgebraicExpressionElement> stack = new Stack<>();
+
+        for (AlgebraicExpressionElement element: equation) {
+            if (ElementType.OPERATOR == element.getType()) {
+                Operator operator = (Operator)element;
+                Operand rhs = (Operand)stack.pop();
+                Operand lhs = (Operand)stack.pop();
+                stack.push(operator.operate(lhs, rhs));
+
+                variables.replace(rhs.getName(), rhs);
+                variables.replace(lhs.getName(), lhs);
+            }
+            else {
+                Operand operand = (Operand)element;
+                Optional.ofNullable(variables.get(operand.getName()))
+                        .ifPresent(memorizedRhs -> operand.setNumericValue(memorizedRhs.getNumericValue()));
+                stack.push(element);
+            }
         }
 
-        Variable variable = (Variable) rpnStack.popOperand();
-
-        variables.put(variable.getName(), variable);
+        return (Operand)stack.pop();
     }
 }

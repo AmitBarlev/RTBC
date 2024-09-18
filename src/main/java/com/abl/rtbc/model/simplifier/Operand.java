@@ -1,6 +1,6 @@
 package com.abl.rtbc.model.simplifier;
 
-public interface Operand extends EquationElement {
+public interface Operand extends AlgebraicExpressionElement {
 
     Double getNumericValue();
 

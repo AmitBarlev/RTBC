@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class Operator implements EquationElement {
+public class Operator implements AlgebraicExpressionElement {
 
     private final int precedence;
     private final String operator;
@@ -18,7 +18,7 @@ public class Operator implements EquationElement {
         precedence = calculatePrecedence();
     }
 
-    public EquationElement operate(Operand lhs, Operand rhs) {
+    public AlgebraicExpressionElement operate(Operand lhs, Operand rhs) {
         Double result = 0d;
 
         result = switch (operator) {
@@ -52,5 +52,10 @@ public class Operator implements EquationElement {
         }
 
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return operator;
     }
 }

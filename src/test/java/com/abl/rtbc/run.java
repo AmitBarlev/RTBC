@@ -1,32 +1,31 @@
-package com.abl.rtbc.simplifier;
+package com.abl.rtbc;
 
 import com.abl.rtbc.service.calculator.ReversePolishNotationCalculator;
-import com.abl.rtbc.service.converter.ReversePolishNotationConverter;
+import com.abl.rtbc.service.organizer.ReversePolishNotationOrganizer;
 import com.abl.rtbc.service.simplifier.InfixSimplifier;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
-public class s {
-    /*i = 0
-j = ++ i
-x = i++ + 5
-y = 5 + 3 * 10
-i += y*/
+public class run {
+
     @Test
     public void x() {
-        String x = """
+        var infix = new InfixSimplifier();
+        var rpn = new ReversePolishNotationOrganizer();
+        var cal = new ReversePolishNotationCalculator();
+
+        var s = """
                 i = 0
-                j = k
+                j = ++ i
                 x = i++ + 5
                 y = 5 + 3 * 10
                 i += y
                 """;
-        var rpn = new ReversePolishNotationConverter();
-        var rpn2 = new ReversePolishNotationCalculator();
-        var f = new InfixSimplifier().simplify(x)
-                .map(rpn::convert)
+
+        var f = infix.simplify(s)
+                .map(rpn::organize)
                 .collectList()
-                .map(rpn2::calculate);
+                .map(cal::calculate);
         StepVerifier.create(f)
                 .expectNextCount(4)
                 .verifyComplete();

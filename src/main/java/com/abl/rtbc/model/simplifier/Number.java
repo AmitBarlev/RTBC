@@ -30,4 +30,9 @@ public class Number implements Operand {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }

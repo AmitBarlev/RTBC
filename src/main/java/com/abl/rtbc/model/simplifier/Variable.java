@@ -4,13 +4,14 @@ package com.abl.rtbc.model.simplifier;
 import lombok.Data;
 
 @Data
-public class Variable implements Operand, EquationElement {
+public class Variable implements Operand, AlgebraicExpressionElement {
 
     private final String name;
     private Double numericValue;
     private String nameWithSelfOperator;
-    private static final String increment = "++";
-    private static final String decrement = "--";
+    private static final String MINUS = "-";
+    private static final String INCREMENT = "++";
+    private static final String DECREMENT = "--";
 
     public Variable(String value) {
         numericValue = 0d;
@@ -29,17 +30,17 @@ public class Variable implements Operand, EquationElement {
         String value = nameWithSelfOperator;
         nameWithSelfOperator = getNameWithoutSelfOperator(nameWithSelfOperator);
 
-        if (value.startsWith(increment)){
+        if (value.startsWith(INCREMENT)){
             return numericValue += 1;
         }
-        else if (value.startsWith(decrement)){
+        else if (value.startsWith(DECREMENT)){
             return numericValue -= 1;
         }
-        else if (value.endsWith(increment)){
+        else if (value.endsWith(INCREMENT)){
             numericValue += 1;
             return numericValue - 1;
         }
-        else if (value.endsWith(decrement)){
+        else if (value.endsWith(DECREMENT)){
             numericValue -= 1;
             return numericValue + 1;
         }
@@ -62,12 +63,17 @@ public class Variable implements Operand, EquationElement {
         return nameWithSelfOperator;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public String getNameWithoutSelfOperator(String value) {
 
-        if (value.startsWith(increment) || value.startsWith(decrement)){
+        if (value.startsWith(INCREMENT) || value.startsWith(DECREMENT)){
             return value.substring(2);
         }
-        else if (value.endsWith(increment) || value.endsWith(decrement)){
+        else if (value.endsWith(INCREMENT) || value.endsWith(DECREMENT)){
             return value.substring(0, value.length() - 2);
         }
 
