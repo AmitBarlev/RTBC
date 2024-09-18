@@ -353,6 +353,21 @@ public class InfixSimplifierTest {
     }
 
     @Test
+    public void simplify_onlyIncrement_runtimeExceptionThrown() {
+        String lines = """
+                i++
+                """;
+        Flux<List<AlgebraicExpressionElement>> output = infixSimplifier.simplify(lines);
+
+        StepVerifier.create(output)
+                .assertNext(list -> {
+                    assertEquals(1, list.size());
+                    assertEquals("i++", list.get(0).getValue());
+                })
+                .verifyComplete();
+    }
+
+    @Test
     public void simplify_unknownCharacter_exceptionThrown() {
         String lines = """
                 i = #

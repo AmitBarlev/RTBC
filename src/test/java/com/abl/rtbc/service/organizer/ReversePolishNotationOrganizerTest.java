@@ -166,7 +166,7 @@ public class ReversePolishNotationOrganizerTest {
 
     @Test
     public void convert_multipleBrackets_stackInTheRightOrder() {
-        //i3 = 2 + (4 * (-++i - 3) + (9 * (12 + 1))
+        //i3 = 2 + (4 * (-3 - 3) + (9 * (12 + 1)))
         List<AlgebraicExpressionElement> list = List.of(
                 new Variable("i3"),
                 new AssignmentOperator("="),
@@ -263,5 +263,19 @@ public class ReversePolishNotationOrganizerTest {
         assignment = rpnPayload.popAssignment();
         assertEquals(ElementType.ASSIGNMENT, assignment.getType());
         assertEquals("=", assignment.getValue());
+    }
+
+    @Test
+    public void convert_singleDecrement_stackInTheRightOrder() {
+        //i3 = i2 += i1 -= 40
+        List<AlgebraicExpressionElement> list = List.of(
+                new Variable("i--")
+        );
+
+        RPNPayload rpnPayload = converter.organize(list);
+
+        List<AlgebraicExpressionElement> output = rpnPayload.popAlgebraicExpression();
+        assertEquals(1, output.size());
+        assertEquals("i--", output.get(0).getValue());
     }
 }

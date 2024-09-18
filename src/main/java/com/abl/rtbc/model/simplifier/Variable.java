@@ -3,6 +3,8 @@ package com.abl.rtbc.model.simplifier;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 public class Variable implements Operand, AlgebraicExpressionElement {
 
@@ -14,7 +16,6 @@ public class Variable implements Operand, AlgebraicExpressionElement {
     private static final String DECREMENT = "--";
 
     public Variable(String value) {
-        numericValue = 0d;
         nameWithSelfOperator = value;
         name = getNameWithoutSelfOperator(value);
     }
@@ -27,10 +28,17 @@ public class Variable implements Operand, AlgebraicExpressionElement {
 
     @Override
     public Double getNumericValue() {
+        if (Objects.isNull(numericValue))
+            throw new RuntimeException("Variable not initialized");
+
         String value = nameWithSelfOperator;
         nameWithSelfOperator = getNameWithoutSelfOperator(nameWithSelfOperator);
 
-        if (value.startsWith(INCREMENT)){
+        if (value.startsWith(MINUS + INCREMENT)){
+            numericValue += 1;
+            return -1 * numericValue;
+        }
+        else if (value.startsWith(INCREMENT)){
             return numericValue += 1;
         }
         else if (value.startsWith(DECREMENT)){
@@ -70,7 +78,10 @@ public class Variable implements Operand, AlgebraicExpressionElement {
 
     public String getNameWithoutSelfOperator(String value) {
 
-        if (value.startsWith(INCREMENT) || value.startsWith(DECREMENT)){
+        if (value.startsWith(MINUS + INCREMENT)){
+            return value.substring(3);
+        }
+        else if (value.startsWith(INCREMENT) || value.startsWith(DECREMENT)){
             return value.substring(2);
         }
         else if (value.endsWith(INCREMENT) || value.endsWith(DECREMENT)){

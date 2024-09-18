@@ -28,13 +28,26 @@ public class ReversePolishNotationCalculator {
         while (!rpnPayload.isEmpty()) {
 
             Operand rhs = calculateEquation(rpnPayload.popAlgebraicExpression(), variables);
+
             Operand lhs = calculateEquation(rpnPayload.popAlgebraicExpression(), variables);
             Operator assignment = (Operator)rpnPayload.popAssignment();
 
             assignment.operate(lhs, rhs);
+            rpnPayload.pushAlgebraicExpression(List.of(lhs));
             variables.put(lhs.getName(), lhs);
             variables.replace(rhs.getName(), rhs);
         }
+
+        handlePossibleIncrementDecrement(rpnPayload, variables);
+    }
+
+    private void handlePossibleIncrementDecrement(RPNPayload payload, Map<String, Operand> variables) {
+        Variable variable = (Variable)payload.popAlgebraicExpression().get(0);
+
+        Optional.ofNullable(variables.get(variable.getName()))
+                .ifPresent(memorizedRhs -> variable.setNumericValue(memorizedRhs.getNumericValue()));
+        variable.getNumericValue(); //if increment/decrement, value will change
+        variables.put(variable.getName(), variable);
     }
 
     private Operand calculateEquation(List<AlgebraicExpressionElement> equation, Map<String, Operand> variables) {
