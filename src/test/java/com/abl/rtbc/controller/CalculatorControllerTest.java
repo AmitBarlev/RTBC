@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -39,8 +41,8 @@ public class CalculatorControllerTest {
 
     @Test
     public void calculate_sanity_calculatorResponse() {
-        CalculatorRequest request = new CalculatorRequest();
-        CalculatorResponse response = new CalculatorResponse();
+        CalculatorRequest request = new CalculatorRequest("");
+        CalculatorResponse response = new CalculatorResponse(new HashMap<>());
 
         doReturn(Mono.just(response)).when(service).calculate(request);
 
@@ -55,7 +57,7 @@ public class CalculatorControllerTest {
 
     @Test
     public void calculate_sanity_calculator() {
-        CalculatorRequest request = new CalculatorRequest();
+        CalculatorRequest request = new CalculatorRequest("");
 
         doThrow(new RuntimeException()).when(service).calculate(request);
 
