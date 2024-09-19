@@ -1,6 +1,6 @@
 package com.abl.rtbc.service.organizer;
 
-import com.abl.rtbc.model.converter.RPNPayload;
+import com.abl.rtbc.model.organizer.RPNPayload;
 import com.abl.rtbc.model.simplifier.*;
 import com.abl.rtbc.model.simplifier.Number;
 import org.junit.jupiter.api.Test;

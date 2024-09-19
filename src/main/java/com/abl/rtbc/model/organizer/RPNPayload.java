@@ -1,6 +1,7 @@
-package com.abl.rtbc.model.converter;
+package com.abl.rtbc.model.organizer;
 
 import com.abl.rtbc.model.simplifier.*;
+import lombok.Value;
 
 import java.util.List;
 import java.util.Stack;
@@ -8,21 +9,21 @@ import java.util.Stack;
 
 public class RPNPayload {
 
-    Stack<List<AlgebraicExpressionElement>> equations;
-    Stack<AlgebraicExpressionElement> assignments;
+    private final Stack<List<AlgebraicExpressionElement>> expressions;
+    private final Stack<AlgebraicExpressionElement> assignments;
 
     public RPNPayload() {
-        equations = new Stack<>();
+        expressions = new Stack<>();
         assignments = new Stack<>();
     }
 
     public boolean isEmpty() {
-        return 1 >= equations.size() && assignments.isEmpty();
+        return 1 >= expressions.size() && assignments.isEmpty();
     }
 
 
     public void pushAlgebraicExpression(List<AlgebraicExpressionElement> equationChunk) {
-        equations.push(equationChunk);
+        expressions.push(equationChunk);
     }
 
     public void pushAssignment(List<AlgebraicExpressionElement> assignment){
@@ -30,7 +31,7 @@ public class RPNPayload {
     }
 
     public List<AlgebraicExpressionElement> popAlgebraicExpression() {
-        return equations.pop();
+        return expressions.pop();
     }
 
     public AlgebraicExpressionElement popAssignment() {

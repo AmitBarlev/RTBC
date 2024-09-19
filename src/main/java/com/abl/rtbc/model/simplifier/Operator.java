@@ -53,9 +53,4 @@ public class Operator implements AlgebraicExpressionElement {
 
         return 0;
     }
-
-    @Override
-    public String toString() {
-        return operator;
-    }
 }

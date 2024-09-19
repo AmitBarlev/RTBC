@@ -1,7 +1,7 @@
 package com.abl.rtbc.service.calculator;
 
 import com.abl.rtbc.model.CalculatorResponse;
-import com.abl.rtbc.model.converter.RPNPayload;
+import com.abl.rtbc.model.organizer.RPNPayload;
 import com.abl.rtbc.model.simplifier.*;
 import org.springframework.stereotype.Service;
 

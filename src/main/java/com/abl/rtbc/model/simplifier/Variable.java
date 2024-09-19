@@ -1,14 +1,16 @@
 package com.abl.rtbc.model.simplifier;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
-@Data
 public class Variable implements Operand, AlgebraicExpressionElement {
 
+    @Getter
     private final String name;
+    @Setter
     private Double numericValue;
     private String nameWithSelfOperator;
     private static final String MINUS = "-";
@@ -18,12 +20,6 @@ public class Variable implements Operand, AlgebraicExpressionElement {
     public Variable(String value) {
         nameWithSelfOperator = value;
         name = getNameWithoutSelfOperator(value);
-    }
-
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override
@@ -57,11 +53,6 @@ public class Variable implements Operand, AlgebraicExpressionElement {
     }
 
     @Override
-    public void setNumericValue(Double value) {
-        numericValue = value;
-    }
-
-    @Override
     public ElementType getType() {
         return ElementType.OPERAND;
     }
@@ -69,11 +60,6 @@ public class Variable implements Operand, AlgebraicExpressionElement {
     @Override
     public String getValue() {
         return nameWithSelfOperator;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     public String getNameWithoutSelfOperator(String value) {

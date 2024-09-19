@@ -1,7 +1,7 @@
 package com.abl.rtbc.service.calculator;
 
 import com.abl.rtbc.model.CalculatorResponse;
-import com.abl.rtbc.model.converter.RPNPayload;
+import com.abl.rtbc.model.organizer.RPNPayload;
 import com.abl.rtbc.model.simplifier.Number;
 import com.abl.rtbc.model.simplifier.*;
 import org.junit.jupiter.api.Test;
@@ -145,7 +145,7 @@ public class ReversePolishNotationCalculatorTest {
     }
 
     @Test
-    public void calculate_singleDecrement_i3Is95() {
+    public void calculate_singleDecrement_i2Is2() {
         RPNPayload rpnPayload = new RPNPayload();
         rpnPayload.pushAssignment(List.of(new AssignmentOperator("=")));
         rpnPayload.pushAlgebraicExpression(List.of(new Variable("i2")));
@@ -157,5 +157,41 @@ public class ReversePolishNotationCalculatorTest {
         CalculatorResponse response = calculator.calculate(List.of(rpnPayload, rpnPayload2));
 
         assertEquals(2d, response.getVariables().get("i2"));
+    }
+
+    @Test
+    public void calculate_minusMultiply_i2Is27() {
+        RPNPayload rpnPayload = new RPNPayload();
+        rpnPayload.pushAssignment(List.of(new AssignmentOperator("=")));
+        rpnPayload.pushAlgebraicExpression(List.of(new Variable("i2")));
+        rpnPayload.pushAlgebraicExpression(List.of(new Number("-3"), new Number("-9"), new Operator("*")));
+
+        CalculatorResponse response = calculator.calculate(List.of(rpnPayload));
+
+        assertEquals(27d, response.getVariables().get("i2"));
+    }
+
+    @Test
+    public void calculate_minusOperator_i2IsMinus27() {
+        RPNPayload rpnPayload = new RPNPayload();
+        rpnPayload.pushAssignment(List.of(new AssignmentOperator("=")));
+        rpnPayload.pushAlgebraicExpression(List.of(new Variable("i2")));
+        rpnPayload.pushAlgebraicExpression(List.of(new Number("-3"), new Number("9"), new Operator("*")));
+
+        CalculatorResponse response = calculator.calculate(List.of(rpnPayload));
+
+        assertEquals(-27d, response.getVariables().get("i2"));
+    }
+
+    @Test
+    public void calculate_divide_i2IsMinus1AndHalf() {
+        RPNPayload rpnPayload = new RPNPayload();
+        rpnPayload.pushAssignment(List.of(new AssignmentOperator("=")));
+        rpnPayload.pushAlgebraicExpression(List.of(new Variable("i2")));
+        rpnPayload.pushAlgebraicExpression(List.of(new Number("3"), new Number("2"), new Operator("/")));
+
+        CalculatorResponse response = calculator.calculate(List.of(rpnPayload));
+
+        assertEquals(1.5d, response.getVariables().get("i2"));
     }
 }

@@ -1,6 +1,6 @@
 package com.abl.rtbc.service.organizer;
 
-import com.abl.rtbc.model.converter.RPNPayload;
+import com.abl.rtbc.model.organizer.RPNPayload;
 import com.abl.rtbc.model.simplifier.ElementType;
 import com.abl.rtbc.model.simplifier.AlgebraicExpressionElement;
 import com.abl.rtbc.model.simplifier.Operator;

@@ -1,6 +1,13 @@
 package com.abl.rtbc.model.simplifier;
 
 public class AssignmentOperator extends Operator {
+
+    private static final String PLUS = "+=";
+    private static final String MINUS = "-=";
+    private static final String MULTIPLY = "*=";
+    private static final String DIVIDE = "/=";
+    private static final String ASSIGNMENT = "=";
+
     public AssignmentOperator(String value) {
         super(value);
     }
@@ -10,11 +17,11 @@ public class AssignmentOperator extends Operator {
         Variable variable = (Variable)lhs;
 
         switch (getOperator()) {
-            case "+=" -> variable.setNumericValue(variable.getNumericValue() + rhs.getNumericValue());
-            case "-=" -> variable.setNumericValue(variable.getNumericValue() - rhs.getNumericValue());
-            case "*=" -> variable.setNumericValue(variable.getNumericValue() * rhs.getNumericValue());
-            case "/=" -> variable.setNumericValue(variable.getNumericValue() / rhs.getNumericValue());
-            case "=" -> variable.setNumericValue(rhs.getNumericValue());
+            case PLUS -> variable.setNumericValue(variable.getNumericValue() + rhs.getNumericValue());
+            case MINUS -> variable.setNumericValue(variable.getNumericValue() - rhs.getNumericValue());
+            case MULTIPLY -> variable.setNumericValue(variable.getNumericValue() * rhs.getNumericValue());
+            case DIVIDE -> variable.setNumericValue(variable.getNumericValue() / rhs.getNumericValue());
+            case ASSIGNMENT -> variable.setNumericValue(rhs.getNumericValue());
         };
 
         return variable;
