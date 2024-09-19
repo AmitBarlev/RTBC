@@ -1,8 +1,10 @@
 package com.abl.rtbc.model.simplifier;
 
 
+import com.abl.rtbc.exception.UninitializedVariableException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -25,7 +27,7 @@ public class Variable implements Operand, AlgebraicExpressionElement {
     @Override
     public Double getNumericValue() {
         if (Objects.isNull(numericValue))
-            throw new RuntimeException("Variable not initialized");
+            throw new UninitializedVariableException("Variable not initialized", nameWithSelfOperator);
 
         String value = nameWithSelfOperator;
         nameWithSelfOperator = getNameWithoutSelfOperator(nameWithSelfOperator);

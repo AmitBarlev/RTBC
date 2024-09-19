@@ -1,5 +1,6 @@
 package com.abl.rtbc.service.simplifier;
 
+import com.abl.rtbc.exception.ParsingException;
 import com.abl.rtbc.model.simplifier.Number;
 import com.abl.rtbc.model.simplifier.*;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class InfixSimplifier {
     private final static Character MINUS = '-';
     private final static Character MULTIPLE = '*';
     private final static Character DIVIDE = '/';
+    private final static Character MODULO = '%';
     private final static String DECREMENT = "--";
     private final static String TRIPLE_MINUS = "---";
     private final static String INCREMENT = "++";
@@ -64,7 +66,7 @@ public class InfixSimplifier {
                     element = new Bracket(ElementType.CLOSING_BRACKET);
                 }
                 else {
-                    throw new RuntimeException("Unidentified expression");
+                    throw new ParsingException("Unidentified expression", current, c);
                 }
 
                 index += element.getValue().length();
@@ -113,12 +115,16 @@ public class InfixSimplifier {
 
     private AlgebraicExpressionElement getNumberElement(int index, String infix) {
         int forward = index;
-        while (forward < infix.length() && Character.isDigit(infix.charAt(forward))){
+        while (forward < infix.length()){
+            char c = infix.charAt(forward);
+            if (!Character.isDigit(c) && '.' != c)
+                break;
+
             ++forward;
         }
 
         if (forward < infix.length() && Character.isLetter(infix.charAt(forward)))
-            throw new RuntimeException("Invalid number definition");
+            throw new ParsingException("Invalid number definition", infix);
 
         return new Number(infix.substring(index, forward));
     }
@@ -133,17 +139,22 @@ public class InfixSimplifier {
             ++forward;
         }
 
+        //check post increment | decrement
         String variable = infix.substring(index, forward);
-        int postDecrement = infix.indexOf(variable + INCREMENT);
-        postDecrement = -1 == postDecrement ? infix.indexOf(variable + DECREMENT) : postDecrement;
-        int until = INCREMENT.length() + 1; //because substring is not inclusive;
-        return -1 == postDecrement ? variable : infix.substring(index, until);
+        int post = infix.indexOf(variable + INCREMENT);
+        post = -1 == post ? infix.indexOf(variable + DECREMENT) : post;
+        int until = post + INCREMENT.length() + 1;
+
+        if (-1 != post && until < infix.length() && !isOperator(infix.charAt(until)))
+            throw new ParsingException("No operator after post operator", infix);
+
+        return -1 == post ? variable : infix.substring(index, until);
     }
 
     private AlgebraicExpressionElement getPreOperandVariable(int index, String infix) {
         int preOperandLength = index;
-        if (infix.startsWith(TRIPLE_MINUS)) {
-            throw new RuntimeException("Pre operator cannot be applied");
+        if (infix.startsWith(TRIPLE_MINUS, index)) {
+            throw new ParsingException("Pre operator cannot be applied", infix);
         }
 
         if (MINUS == infix.charAt(preOperandLength)) {
@@ -153,7 +164,7 @@ public class InfixSimplifier {
         if (infix.startsWith(INCREMENT, preOperandLength) || infix.startsWith(DECREMENT, preOperandLength)) {
             preOperandLength += 2;
             if (!Character.isLetter(infix.charAt(preOperandLength)))
-                throw new RuntimeException("Pre operators cannot be applied to anything other than variables");
+                throw new ParsingException("Pre operators cannot be applied to anything other than variables", infix);
         }
 
         String value = infix.substring(index, preOperandLength) + getVariableValue(preOperandLength, infix);
@@ -161,7 +172,7 @@ public class InfixSimplifier {
     }
 
     private boolean isOperator(Character c) {
-        return PLUS == c || MINUS == c || DIVIDE == c || MULTIPLE == c;
+        return PLUS == c || MINUS == c || DIVIDE == c || MULTIPLE == c || MODULO == c;
     }
 
     private boolean isEqualsOperator(String current) {
@@ -169,7 +180,7 @@ public class InfixSimplifier {
     }
 
     private boolean isPreOperator(String expression, int index){
-        if (expression.startsWith(INCREMENT) || expression.equals(DECREMENT)) {
+        if (expression.startsWith(INCREMENT, index) || expression.startsWith(DECREMENT, index)) {
             return true;
         }
 

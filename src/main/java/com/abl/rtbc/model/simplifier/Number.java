@@ -1,9 +1,6 @@
 package com.abl.rtbc.model.simplifier;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 public class Number implements Operand {
