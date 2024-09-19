@@ -1,6 +1,7 @@
 package com.abl.rtbc.model.simplifier;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class Operator implements AlgebraicExpressionElement {
             case "-" -> lhs.getNumericValue() - rhs.getNumericValue();
             case "*" -> lhs.getNumericValue() * rhs.getNumericValue();
             case "/" -> lhs.getNumericValue() / rhs.getNumericValue();
+            case "%" -> lhs.getNumericValue() % rhs.getNumericValue();
             default -> result;
         };
 

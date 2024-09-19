@@ -1,5 +1,6 @@
 package com.abl.rtbc.service.organizer;
 
+import com.abl.rtbc.exception.InvalidArithmeticException;
 import com.abl.rtbc.model.organizer.RPNPayload;
 import com.abl.rtbc.model.simplifier.ElementType;
 import com.abl.rtbc.model.simplifier.AlgebraicExpressionElement;
@@ -63,7 +64,7 @@ public class ReversePolishNotationOrganizer {
 
         while (!stack.isEmpty()) {
             if (ElementType.OPENING_BRACKET == stack.peek().getType())
-                throw new RuntimeException("Not valid");
+                throw new InvalidArithmeticException("Invalid arithmetic expression, brackets not well formed");
 
             rpnOrder.add(stack.pop());
         }

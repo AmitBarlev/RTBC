@@ -353,7 +353,7 @@ public class InfixSimplifierTest {
     }
 
     @Test
-    public void simplify_onlyIncrement_runtimeExceptionThrown() {
+    public void simplify_onlyIncrement_singleValue() {
         String lines = """
                 i++
                 """;
@@ -363,6 +363,23 @@ public class InfixSimplifierTest {
                 .assertNext(list -> {
                     assertEquals(1, list.size());
                     assertEquals("i++", list.get(0).getValue());
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    public void simplify_fractions_3Elements() {
+        String lines = """
+                i=3.5
+                """;
+        Flux<List<AlgebraicExpressionElement>> output = infixSimplifier.simplify(lines);
+
+        StepVerifier.create(output)
+                .assertNext(list -> {
+                    assertEquals(3, list.size());
+                    assertEquals("i", list.get(0).getValue());
+                    assertEquals("=", list.get(1).getValue());
+                    assertEquals("3.5", list.get(2).getValue());
                 })
                 .verifyComplete();
     }
@@ -407,6 +424,18 @@ public class InfixSimplifierTest {
     public void simplify_doublePlusOperator_runtimeExceptionThrown() {
         String lines = """
                 i3 = 1 + + 3
+                """;
+
+        Flux<List<AlgebraicExpressionElement>> output = infixSimplifier.simplify(lines);
+
+        StepVerifier.create(output)
+                .verifyError(RuntimeException.class);;
+    }
+
+    @Test
+    public void simplify_doublePlusOperatorWithVariable_runtimeExceptionThrown() {
+        String lines = """
+                i3 = i++j
                 """;
 
         Flux<List<AlgebraicExpressionElement>> output = infixSimplifier.simplify(lines);

@@ -1,5 +1,7 @@
 package com.abl.rtbc.model.simplifier;
 
+import lombok.ToString;
+
 public class AssignmentOperator extends Operator {
 
     private static final String PLUS = "+=";
