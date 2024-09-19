@@ -56,4 +56,13 @@ public class GlobalExceptionHandlerTest {
         String expectedMessage = String.format("Variable %s was not initialized", variableName);
         assertEquals(expectedMessage, response.getBody());
     }
+
+    @Test
+    public void handlerUnkownError_sanity_internalServerError() {
+        RuntimeException ex = new RuntimeException("Unknown error");
+
+        ResponseEntity<String> response = handler.handleUnknownError(ex);
+
+        assertEquals("Unknown error, please contact development team", response.getBody());
+    }
 }
