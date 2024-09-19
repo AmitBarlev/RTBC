@@ -39,4 +39,14 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(String.format("Variable %s was not initialized", ex.getVariableName()));
     }
+
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseEntity<String> handleUnknownError(RuntimeException ex) {
+
+        log.error("Unknown error, throwable is attached", ex);
+
+        return ResponseEntity
+                .internalServerError()
+                .body("Unknown error, please contact development team");
+    }
 }
